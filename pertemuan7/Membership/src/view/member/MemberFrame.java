@@ -15,6 +15,7 @@ public class MemberFrame extends JFrame {
     private JComboBox<String> comboJenis;
     private MemberDao memberDao;
     private JenisMemberDao jenisMemberDao;
+    private JTable table; // Tambahkan deklarasi untuk JTable
 
     public MemberFrame(MemberDao memberDao, JenisMemberDao jenisMemberDao) {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -37,20 +38,78 @@ public class MemberFrame extends JFrame {
         comboJenis = new JComboBox<>();
         comboJenis.setBounds(15, 100, 150, 30);
 
-        JButton button = new JButton("Simpan");
-        button.setBounds(15, 140, 100, 40);
+        // Tombol Simpan
+        JButton buttonSimpan = new JButton("Simpan");
+        buttonSimpan.setBounds(15, 140, 100, 40);
 
-        JTable table = new JTable();
+        // Tombol Update
+        JButton buttonUpdate = new JButton("Update");
+        buttonUpdate.setBounds(130, 140, 100, 40);
+
+        // Tombol Delete
+        JButton buttonDelete = new JButton("Delete");
+        buttonDelete.setBounds(245, 140, 100, 40);
+
+        table = new JTable();
         JScrollPane scrollableTable = new JScrollPane(table);
         scrollableTable.setBounds(15, 200, 350, 200);
 
         tableModel = new MemberTableModel(memberList);
         table.setModel(tableModel);
 
+        // Listener untuk tombol Simpan
         MemberButtonSimpanActionListener actionListener = new MemberButtonSimpanActionListener(this, memberDao);
-        button.addActionListener(actionListener);
+        buttonSimpan.addActionListener(actionListener);
 
-        this.add(button);
+        // Listener untuk tombol Update
+        buttonUpdate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    Member member = memberList.get(selectedRow);
+                    member.setNama(getNama());
+                    member.setJenisMember(getJenisMember());
+
+                    int result = memberDao.update(member);
+                    if (result > 0) {
+                        tableModel.fireTableRowsUpdated(selectedRow, selectedRow);
+                        showAlert("Data berhasil diupdate");
+                    } else {
+                        showAlert("Gagal mengupdate data");
+                    }
+                } else {
+                    showAlert("Pilih data yang ingin diupdate");
+                }
+            }
+        });
+
+        // Listener untuk tombol Delete
+        buttonDelete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    Member member = memberList.get(selectedRow);
+
+                    int confirm = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        int result = memberDao.delete(member);
+                        if (result > 0) {
+                            memberList.remove(selectedRow);
+                            tableModel.fireTableRowsDeleted(selectedRow, selectedRow);
+                            showAlert("Data berhasil dihapus");
+                        } else {
+                            showAlert("Gagal menghapus data");
+                        }
+                    }
+                } else {
+                    showAlert("Pilih data yang ingin dihapus");
+                }
+            }
+        });
+
+        this.add(buttonSimpan);
+        this.add(buttonUpdate);
+        this.add(buttonDelete);
         this.add(textFieldNama);
         this.add(labelInput);
         this.add(labelJenis);

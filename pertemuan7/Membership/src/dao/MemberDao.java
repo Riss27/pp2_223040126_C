@@ -30,7 +30,7 @@ public class MemberDao {
     public int update(Member member){
         int result = -1;
         try(Connection connection = MySqlConnection.getInstance().getConnection();){
-            PreparedStatement statement = connection.prepareStatement("update member set nama = ?, jenis_member_id = ? where_id = ?");
+            PreparedStatement statement = connection.prepareStatement("update member set nama = ?, jenis_member_id = ? where id = ?");
             statement.setString(1, member.getNama());
             statement.setString(2, member.getJenisMember().getId());
             statement.setString(3, member.getId());
@@ -45,7 +45,7 @@ public class MemberDao {
     public int delete(Member member){
         int result = -1;
         try(Connection connection = MySqlConnection.getInstance().getConnection();){
-            PreparedStatement statement = connection.prepareStatement("selete from member shere id = ?");
+            PreparedStatement statement = connection.prepareStatement("delete from member where id = ?");
             statement.setString(1, member.getId());
 
             result  = statement.executeUpdate();
