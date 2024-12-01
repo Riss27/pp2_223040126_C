@@ -1,22 +1,47 @@
 package dao;
 
+import java.util.List;
 import model.JenisMember;
 import org.apache.ibatis.session.SqlSession;
-import java.util.List;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 public class JenisMemberDao {
 
-    private SqlSession sqlSession;
+   private final SqlSessionFactory sqlSessionFactory;
 
-    public JenisMemberDao(SqlSession sqlSession) {
-        this.sqlSession = sqlSession;
+    public JenisMemberDao(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
-    public void insert(JenisMember jenisMember) {
-        sqlSession.insert("JenisMemberMapper.insert", jenisMember);
+    public int insert(JenisMember jenisMember) {
+        int result;
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            result = session.insert("mapper.JenisMemberMapper.insert", jenisMember);
+        }
+        return result;
+    }
+
+    public int update(JenisMember jenisMember) {
+        int result;
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            result = session.update("mapper.JenisMemberMapper.update", jenisMember);
+        }
+        return result;
+    }
+
+    public int delete(int jenisMember) {
+        int result;
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            result = session.delete("mapper.JenisMemberMapper.delete", jenisMember);
+        }
+        return result;
     }
 
     public List<JenisMember> findAll() {
-        return sqlSession.selectList("JenisMemberMapper.findAll");
+        List<JenisMember> result;
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            result = session.selectList("mapper.JenisMemberMapper.findAll");
+        }
+        return result;
     }
 }

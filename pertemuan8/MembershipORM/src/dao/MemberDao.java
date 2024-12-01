@@ -1,30 +1,47 @@
 package dao;
 
-import model.Member;
-import org.apache.ibatis.session.SqlSession;
 import java.util.List;
+import model.Member;
+import model.JenisMember;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 public class MemberDao {
+    private final SqlSessionFactory sqlSessionFactory;
 
-    private SqlSession sqlSession;
-
-    public MemberDao(SqlSession sqlSession) {
-        this.sqlSession = sqlSession;
+    public MemberDao(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
-    public void insert(Member member) {
-        sqlSession.insert("MemberMapper.insert", member);
+    public int insert(Member member) {
+        int result;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            result = sqlSession.getMapper(MemberMapper.class).insert(member); // Gunakan getMapper untuk akses
+        }
+        return result;
+    }
+
+    public int update(Member member) {
+        int result;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            result = sqlSession.getMapper(MemberMapper.class).update(member); // Gunakan getMapper untuk akses
+        }
+        return result;
+    }
+
+    public int delete(String memberId) {
+        int result;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            result = sqlSession.getMapper(MemberMapper.class).delete(memberId); // Gunakan getMapper untuk akses
+        }
+        return result;
     }
 
     public List<Member> findAll() {
-        return sqlSession.selectList("MemberMapper.findAll");
-    }
-    
-    public void update(Member member) {
-        sqlSession.update("MemberMapper.update", member);
-    }
-
-    public void delete(String id) {
-        sqlSession.delete("MemberMapper.delete", id);
+        List<Member> result;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            result = sqlSession.getMapper(MemberMapper.class).findAll(); // Gunakan getMapper untuk akses
+        }
+        return result;
     }
 }
