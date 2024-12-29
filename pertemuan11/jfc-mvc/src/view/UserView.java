@@ -19,6 +19,9 @@ public class UserView extends JFrame {
     private JButton btnExport = new JButton("Export");
     private JList<String> userList = new JList<>();
     private DefaultListModel<String> listModel = new DefaultListModel<>();
+    private  JButton startButton = new JButton("Mulai");
+    private  JProgressBar progressBar = new JProgressBar(0, 100);
+    private JLabel statusLabel = new JLabel("Progress bar", JLabel.CENTER);
 
     public UserView() {
         setTitle("User Management");
@@ -35,11 +38,18 @@ public class UserView extends JFrame {
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnRefresh);
         buttonPanel.add(btnExport);
+        buttonPanel.add(startButton);
         panel.add(buttonPanel);
+        
+        JPanel statusPanel = new JPanel();
+        statusPanel.add(statusLabel, BorderLayout.NORTH);
+        statusPanel.add(progressBar, BorderLayout.CENTER);
+
 
         userList.setModel(listModel);
         add(panel, BorderLayout.NORTH);
         add(new JScrollPane (userList), BorderLayout.CENTER);
+        add(statusPanel, BorderLayout.SOUTH);
     }
 
     public String getNameInput () { 
@@ -67,5 +77,18 @@ public class UserView extends JFrame {
     
     public void addExportListener (ActionListener listener) {
         btnExport.addActionListener(listener);
+    }
+    
+     public void addStartButtonListener(ActionListener listener) {
+        startButton.addActionListener(listener);
+    }
+    public JButton getStartButton() {
+        return startButton;
+    }
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+    public JLabel getStatusLabel() {
+        return statusLabel;
     }
 }
